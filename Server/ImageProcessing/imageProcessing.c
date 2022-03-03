@@ -1,30 +1,25 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <MagickWand/MagickWand.h>
+#include "imageProcessing.h"
 
 struct SimplePixel {
    int  red;
    int  green;
    int  blue;
 } ;  
+
 typedef struct SimplePixel SimplePixel;
+float changeValueTo8Bits(int value, int originalDepth);
+SimplePixel changePixelDepthTo8Bits(PixelInfo* pixel);
+int isSimplePixelBiggerThanThreshold(SimplePixel pixel, int threshold);
+MagickWand* getImage(char* path);
+void endImageProcessing(MagickWand* image);
+long countPixelsBiggerThanThreshold(MagickWand *image, int threshold);
 
-float changeValueTo8Bits(int value, int originalDepth){
-  return value*(pow(2,8)-1)/(pow(2,originalDepth)-1);
-}
-
-SimplePixel changePixelDepthTo8Bits(PixelInfo* pixel){
-  SimplePixel newPixel;
-  newPixel.red = changeValueTo8Bits(pixel->red, pixel->depth);
-  newPixel.green = changeValueTo8Bits(pixel->green, pixel->depth);
-  newPixel.blue = changeValueTo8Bits(pixel->blue, pixel->depth);
-  return newPixel;
-}
-
-int isSimplePixelBiggerThanThreshold(SimplePixel pixel, int threshold){
-  int averagePixelValue = (pixel.blue+pixel.green+pixel.red)/3;
-  return averagePixelValue>threshold; 
+long obtainPixelsBiggerThanThreshold(char* imagePath, int threshold)
+{
+  MagickWand* image = getImage(imagePath);
+  long pixelsBiggerThanThreshols = countPixelsBiggerThanThreshold(image, threshold);
+  endImageProcessing(image);
+  return pixelsBiggerThanThreshols;
 }
 
 MagickWand* getImage(char* path){
@@ -48,11 +43,11 @@ void endImageProcessing(MagickWand* image){
   MagickWandTerminus();
 }
 
-int countPixelsLessThanThreshold(MagickWand *image, int threshold){
+long countPixelsBiggerThanThreshold(MagickWand *image, int threshold){
   PixelInfo pixel;
   unsigned long width;
 
-  int pixelsBiggerThanThreshold = 0;
+  long pixelsBiggerThanThreshold = 0;
   PixelIterator *iterator=NewPixelIterator(image);
   if (iterator == (PixelIterator *) NULL)
     printf("F");
@@ -74,10 +69,28 @@ int countPixelsLessThanThreshold(MagickWand *image, int threshold){
   return pixelsBiggerThanThreshold;
 }
 
+
+SimplePixel changePixelDepthTo8Bits(PixelInfo* pixel){
+  SimplePixel newPixel;
+  newPixel.red = changeValueTo8Bits(pixel->red, pixel->depth);
+  newPixel.green = changeValueTo8Bits(pixel->green, pixel->depth);
+  newPixel.blue = changeValueTo8Bits(pixel->blue, pixel->depth);
+  return newPixel;
+}
+
+int isSimplePixelBiggerThanThreshold(SimplePixel pixel, int threshold){
+  int averagePixelValue = (pixel.blue+pixel.green+pixel.red)/3;
+  return averagePixelValue>threshold; 
+}
+
+float changeValueTo8Bits(int value, int originalDepth){
+  return value*(pow(2,8)-1)/(pow(2,originalDepth)-1);
+}
+
 int main(int argc,char **argv)
 {
-  MagickWand* image = getImage("img.jpeg");
-  printf("Pixeles mayores al threshold: %i \n\n", countPixelsLessThanThreshold(image, 230));
-  endImageProcessing(image);
+  printf("Pixeles mayores al threshold: %ld \n\n", obtainPixelsBiggerThanThreshold("img.jpeg", 230));
   return(0);
 }
+
+
