@@ -1,0 +1,42 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/local/include/ImageMagick-7"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64",
+            "compilerArgs": [
+                "-fopenmp ",
+                "-DMAGICKCORE_HDRI_ENABLE=1 ",
+                "-DMAGICKCORE_QUANTUM_DEPTH=16 ",
+                "-fopenmp ",
+                "-DMAGICKCORE_HDRI_ENABLE=1 ",
+                "-DMAGICKCORE_QUANTUM_DEPTH=16 ",
+                "-I/usr/local/include/ImageMagick-7",
+                "-L/usr/local/lib ",
+                "-lMagickWand-7.Q16HDRI ",
+                "-lMagickCore-7.Q16HDRI",
+                "-lm",
+                "-ldl"
+            ]
+        },
+        {
+            "name": "standard",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
