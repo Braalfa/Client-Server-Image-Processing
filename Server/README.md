@@ -9,7 +9,7 @@ cc -g main.c ImageProcessing/imageProcessing.c Logging/logging.c -o main -fdiagn
 
 ./main
 
-## En vscode
+### En vscode
 
 1. Abrir main.c
 2. Run -> Run Withouth Debugging
