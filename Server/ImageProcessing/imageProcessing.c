@@ -86,11 +86,3 @@ int isSimplePixelBiggerThanThreshold(SimplePixel pixel, int threshold){
 float changeValueTo8Bits(int value, int originalDepth){
   return value*(pow(2,8)-1)/(pow(2,originalDepth)-1);
 }
-
-int main(int argc,char **argv)
-{
-  printf("Pixeles mayores al threshold: %ld \n\n", obtainPixelsBiggerThanThreshold("img.jpeg", 230));
-  return(0);
-}
-
-

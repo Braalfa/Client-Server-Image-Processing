@@ -6,9 +6,6 @@
 #include <math.h>
 #include <MagickWand/MagickWand.h>
 
-
-#define STR_LEN 200
-
 long obtainPixelsBiggerThanThreshold(char* imagePath, int threshold);
 
 #endif
