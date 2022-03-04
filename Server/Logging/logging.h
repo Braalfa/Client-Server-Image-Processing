@@ -6,7 +6,7 @@
 #include <time.h>
 
 
-#define STR_LEN 200
+#define STR_LEN 300
 
 void initializeLogFile();
 void logString(char* logInfo);

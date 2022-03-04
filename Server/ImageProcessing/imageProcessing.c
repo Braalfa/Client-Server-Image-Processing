@@ -17,9 +17,15 @@ long countPixelsBiggerThanThreshold(MagickWand *image, int threshold);
 long obtainPixelsBiggerThanThreshold(char* imagePath, int threshold)
 {
   MagickWand* image = getImage(imagePath);
-  long pixelsBiggerThanThreshols = countPixelsBiggerThanThreshold(image, threshold);
+  long pixelsBiggerThanThreshold = countPixelsBiggerThanThreshold(image, threshold);
   endImageProcessing(image);
-  return pixelsBiggerThanThreshols;
+
+  char logLine[STR_LEN];
+  sprintf(logLine, "Image: %s - Found %ld pixels bigger than %i", imagePath, pixelsBiggerThanThreshold, threshold);
+  logString(logLine);
+
+
+  return pixelsBiggerThanThreshold;
 }
 
 MagickWand* getImage(char* path){
