@@ -4,7 +4,7 @@
 #include "serverController.h"
 
 
-int callback_hello_world (const struct _u_request * request, struct _u_response * response, void * user_data);
+
 int processImage (const struct _u_request * request, struct _u_response * response, void * user_data);
 int countimagesindirectoy();
 
@@ -21,11 +21,10 @@ int createServer(){
 
     // Se define los endpoints que se van a utilizar
     ulfius_add_endpoint_by_val(&instance, "POST", "/api/imagePixels", NULL, 0, &processImage, NULL);
-
     // se inicia el framework
     if (ulfius_start_framework(&instance) == U_OK) {
         printf("Servidor iniciado en el puerto %d\n", instance.port);
-        getchar();
+        while (1){}
     } else {
         fprintf(stderr, "Error iniciando el servidor\n");
     }
@@ -53,18 +52,18 @@ int processImage (const struct _u_request * request, struct _u_response * respon
         int imageIndex=countimagesindirectoy();
 
         //crea el comando para decodificar las imagenes y guardarlas en el directorio
-        char *commandline="base64 --decode coded.txt > Images/image";
+        char *commandline="base64 --decode /home/brayan/Cursos/Operativos/Tarea1/Server/coded.txt > /home/brayan/Cursos/Operativos/Tarea1/Server/Images/image";
 
         // verifica cual es el formato de la imagen enviada
-        char *extension= malloc(4);
+        char *extension= malloc(5);
         if (imageData[0] == 'R') strcpy(extension,".gif");
         else if (imageData[0] == '/') strcpy(extension, ".jpg");
-        else strcpy(extension,"png");
+        else strcpy(extension,".png");
 
         char imageIndexString[33];
         sprintf(imageIndexString, "%d", imageIndex);
 
-        FILE *file = fopen("coded.txt", "w");
+        FILE *file = fopen("/home/brayan/Cursos/Operativos/Tarea1/Server/coded.txt", "w");
         fputs(imageData, file);
         fclose(file);
 
@@ -78,7 +77,7 @@ int processImage (const struct _u_request * request, struct _u_response * respon
         system(commandToDecodeImage);
 
         //se crea la ruta para para la función que verifica los pixeles
-        char *directory="Images/image";
+        char *directory="/home/brayan/Cursos/Operativos/Tarea1/Server/Images/image";
         char *route= malloc(strlen(directory)+strlen(extension)+ strlen(imageIndexString)+1);
         strcpy(route,directory);
         strcat(route,extension);
@@ -114,7 +113,7 @@ int countimagesindirectoy(){
     int file_count = 0;
     DIR * dirp;
     struct dirent * entry;
-    dirp = opendir("Images");
+    dirp = opendir("/home/brayan/Cursos/Operativos/Tarea1/Server/Images");
     while ((entry = readdir(dirp)) != NULL) {
         if (entry->d_type == DT_REG) {
             file_count++;
