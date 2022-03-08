@@ -4,7 +4,8 @@
 int main(int argc,char **argv)
 {
   initializeLogFile();
-  printf("Pixeles mayores al threshold: %ld \n\n", obtainPixelsBiggerThanThreshold("Images/img.jpeg", 230));
+  logString("Iniciando main");
   createServer();
   return(0);
 }
+ 
