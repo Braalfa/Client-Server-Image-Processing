@@ -1,17 +1,10 @@
 #include "client.h"
 
-void *sendImageData() {
+void sendImageData() {
 
     int response;
-
-    while(1){
-
-        pthread_mutex_lock(&bloqueo);
-        if(stop == 1){
-            pthread_mutex_unlock(&bloqueo);
-            break;
-        }
-        pthread_mutex_unlock(&bloqueo);
+        
+       
         ulfius_init_request(&connRequest);
             
         ulfius_set_request_properties(&connRequest,
@@ -24,7 +17,17 @@ void *sendImageData() {
 
         response = ulfius_send_http_request(&connRequest, &resRequest);
         if (response == U_OK) {
-            printf("Image sent server\n");
+            json_t *jsonResult = ulfius_get_json_body_response(&resRequest, NULL);
+            if(jsonResult != NULL){
+                json_t *jsonPixelValue = json_object_get(jsonResult, "pixelsApproved");
+                int pixelValue = json_integer_value(jsonPixelValue);
+                printf("La respuesta del servidor es %d\n", pixelValue);
+                json_decref(jsonPixelValue);
+                json_decref(jsonResult);
+            }
+            else{
+                printf("Hubo un error al recibir la respuesta del servidor\n");
+            }
         }
         else {
             printf("Failed to send image to server\n");
@@ -33,8 +36,6 @@ void *sendImageData() {
 
         ulfius_clean_response(&resRequest);
         ulfius_clean_request(&connRequest);
-    }
-    pthread_exit(NULL);
 
 }
 

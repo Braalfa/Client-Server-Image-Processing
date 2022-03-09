@@ -5,78 +5,79 @@
 #include <pthread.h>
 
 
+
 //Funciones utilizadas por el main
-void makePathToImage(char *imagePath);
+void makePathToImage(char *userInput);
 void readPathToImage();
 void makeIpPort(char *port, char *ip);
 
 int main(int argumentAmount, char* argumentValue[]) {
     int pixelNumber = -1;
     char ip[25] = "";
-    char imagePath[200] = "";
     char port[25] = "";
-    stop = 0;
-    pthread_mutex_init(&bloqueo, NULL);
+
     
 
      for (int i = 0; i < argumentAmount; i++) {
         if(strcmp(argumentValue[i], "-ip") == 0){
             strcpy(ip, argumentValue[i + 1]);
         }
-        if(strcmp(argumentValue[i], "-pn") == 0){
-            pixelNumber = atoi(argumentValue[i + 1]);
-        }
         if(strcmp(argumentValue[i], "-port") == 0){
             strcpy(port, argumentValue[i + 1]);
         }
-        if(strcmp(argumentValue[i], "-imp") == 0){
-            strcpy(imagePath, argumentValue[i + 1]);
-        }
-
 
     }
     //Verificar si los argumentos se pasaron coreectamente
-    if (pixelNumber == -1 || strcmp(ip, "") == 0|| strcmp(imagePath, "") == 0 || strcmp(port, "") == 0) {
+    if (strcmp(ip, "") == 0 || strcmp(port, "") == 0) {
         printf("Fue imposible conectarse al servidor. Argumentos faltantes o erroneos\n");
         return 1;
     }
     
-    makePathToImage(imagePath);
-    system(imageLinkToServer);
+    
+    
     makeIpPort(port, ip);
 
-    //Creacion del Json para enviar la imagen
-    imageDataJson = json_object();
-    json_object_set_new(imageDataJson, "image", json_string(encondedContent));
-    json_object_set_new(imageDataJson, "pixelValue", json_integer(pixelNumber));
-
-    //Creacion de los hilos para el cliente
-    pthread_t supervisor;
-    pthread_create(&supervisor,NULL, sendImageData, NULL);
+    
 
     //Ciclo de envio de datos con los threads
-    char userInput[10];
-    printf("En caso de querer terminar el programa digitar end\n");
+    char userInput[100];
     while(1){
+        printf("En caso de querer terminar el programa digitar end. Caso contrario, favor introducir la ruta de la nueva imagen a enviar\n");
         scanf("%s", userInput);
         if(strcmp(userInput, "end") == 0){
-            pthread_mutex_lock(&bloqueo);
-            stop = 1;
-            pthread_mutex_unlock(&bloqueo);
-            pthread_join(supervisor, NULL);
             break;
         }
+        printf("Favor introducir el valor del pixel asociado a la imagen\n");
+        scanf("%d", &pixelNumber);
+        FILE *file = fopen(userInput, "r");
+        //Comprueba si el archivo existe en esa direccion. Si no vuelve al inicio del while
+            if (!file) {
+                printf("No fue posible abrir el archivo en la direccion %s\n", userInput);
+                continue;
+            }
+        fclose(file);    
+        makePathToImage(userInput);
+        system(imageLinkToServer);
+        readPathToImage();
+
+        //Creacion del Json para enviar la imagen
+        imageDataJson = json_object();
+        json_object_set_new(imageDataJson, "image", json_string(encondedContent));
+        json_object_set_new(imageDataJson, "pixelValue", json_integer(pixelNumber));
+        //Se envia la imagen al servidor
+        sendImageData();
+
+        //Se liberan los datos de la memoria dinamica
+        free(imageLinkToServer);
+        free(encondedContent);
+        json_decref(imageDataJson);
 
     }
 
-
-
     //Liberacion de memoria dinamica
-    free(imageLinkToServer);
     free(dynamicURL);
-    free(encondedContent);
-    json_decref(imageDataJson);
-    pthread_mutex_destroy(&bloqueo);
+  
+    
 
 
 
@@ -87,15 +88,15 @@ int main(int argumentAmount, char* argumentValue[]) {
 }
 
 //Codigo que genera el comando de terminal necesario para determinar la ruta dinamica de la imagen
-void makePathToImage(char *imagePath){
+void makePathToImage(char *userInput){
     char *firstPart = "base64 ";
     char *secondPartImage = " > encondedImage.txt";
 
-    imageLinkToServer = malloc(strlen(firstPart) + strlen(imagePath) + strlen(secondPartImage) + 1);
+    imageLinkToServer = malloc(strlen(firstPart) + strlen(userInput) + strlen(secondPartImage) + 1);
 
 
     strcpy(imageLinkToServer, firstPart);
-    strcat(imageLinkToServer, imagePath);
+    strcat(imageLinkToServer, userInput);
     strcat(imageLinkToServer, secondPartImage);
 }
 

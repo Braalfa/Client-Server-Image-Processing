@@ -17,10 +17,9 @@ json_t *imageDataJson;
 char *imageLinkToServer;
 char *encondedContent;
 char *dynamicURL;
-int stop;
-pthread_mutex_t bloqueo;
 
-void *sendImageData();
+
+void sendImageData();
 
 
 
