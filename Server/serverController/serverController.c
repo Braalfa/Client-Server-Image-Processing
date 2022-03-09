@@ -2,13 +2,14 @@
 // Created by brayan on 5/3/22.
 //
 #include "serverController.h"
+#include "../ImageProcessing/imageProcessing.h"
+#include "../Logging/logging.h"
 
 
 
 int processImage (const struct _u_request * request, struct _u_response * response, void * user_data);
 int countimagesindirectoy();
-
-
+char logLine[STR_LEN];
 //función para crear el servidor RESTAPI por medio de la biblioteca ulfius: https://github.com/babelouest/ulfius
 int createServer(){
     struct _u_instance instance;
@@ -23,12 +24,15 @@ int createServer(){
     ulfius_add_endpoint_by_val(&instance, "POST", "/api/imagePixels", NULL, 0, &processImage, NULL);
     // se inicia el framework
     if (ulfius_start_framework(&instance) == U_OK) {
-        printf("Servidor iniciado en el puerto %d\n", instance.port);
+        sprintf(logLine, "Servidor iniciado en el puerto %d", instance.port);
+        logString(logLine);
         while (1){}
     } else {
+        logString("Error iniciando el servidor");
         fprintf(stderr, "Error iniciando el servidor\n");
     }
-    printf("Se cierra el servidor\n");
+
+    logString("Terminando el servidor");
 
     ulfius_stop_framework(&instance);
     ulfius_clean_instance(&instance);
@@ -42,6 +46,7 @@ int processImage (const struct _u_request * request, struct _u_response * respon
     json_t *jsonData = ulfius_get_json_body_request(request, NULL);
     json_t * json_body = NULL;
     if (jsonData != NULL) {
+
         json_t *jsonPixelValue = json_object_get(jsonData, "pixelValue");
         int pixelValue = json_integer_value(jsonPixelValue);
 
@@ -51,8 +56,11 @@ int processImage (const struct _u_request * request, struct _u_response * respon
         //obtiene el valor de las cantidad de imagenes existentes
         int imageIndex=countimagesindirectoy();
 
+        sprintf(logLine, "Se recibió la imagen %i", imageIndex);
+        logString(logLine);
+
         //crea el comando para decodificar las imagenes y guardarlas en el directorio
-        char *commandline="base64 --decode /home/brayan/Cursos/Operativos/Tarea1/Server/coded.txt > /home/brayan/Cursos/Operativos/Tarea1/Server/Images/image";
+        char *commandline="base64 --decode '/mnt/c/Users/Brayan/Documents/I Sem 2022/Operativos/Tarea 1/Server/coded.txt' > '/mnt/c/Users/Brayan/Documents/I Sem 2022/Operativos/Tarea 1/Server/Images/image'";
 
         // verifica cual es el formato de la imagen enviada
         char *extension= malloc(5);
@@ -63,7 +71,7 @@ int processImage (const struct _u_request * request, struct _u_response * respon
         char imageIndexString[33];
         sprintf(imageIndexString, "%d", imageIndex);
 
-        FILE *file = fopen("/home/brayan/Cursos/Operativos/Tarea1/Server/coded.txt", "w");
+        FILE *file = fopen("/mnt/c/Users/Brayan/Documents/I Sem 2022/Operativos/Tarea 1/Server/coded.txt", "w");
         fputs(imageData, file);
         fclose(file);
 
@@ -77,15 +85,19 @@ int processImage (const struct _u_request * request, struct _u_response * respon
         system(commandToDecodeImage);
 
         //se crea la ruta para para la función que verifica los pixeles
-        char *directory="/home/brayan/Cursos/Operativos/Tarea1/Server/Images/image";
+        char *directory="/mnt/c/Users/Brayan/Documents/I Sem 2022/Operativos/Tarea 1/Server/Images/image";
         char *route= malloc(strlen(directory)+strlen(extension)+ strlen(imageIndexString)+1);
         strcpy(route,directory);
-        strcat(route,extension);
         strcat(route,imageIndexString);
+        strcat(route,extension);
 
         int pixelsApproved=0;
         //llama a la función que cuenta la cantidad de pixeles mayores al valor definido
-        //pixelsApproved=verifyPixels(route,pixelValue);
+        pixelsApproved=obtainPixelsBiggerThanThreshold(route, pixelValue);
+
+        free(extension);
+        free(route);
+        free(commandToDecodeImage);
 
         //se crea el cuerpo del response
         json_body = json_object();
@@ -95,9 +107,14 @@ int processImage (const struct _u_request * request, struct _u_response * respon
         json_decref(jsonPixelValue);
         json_decref(jsonImageData);
 
-        printf("Se recibió una imagen");
+        sprintf(logLine, "Se encontraron %i pixeles mayores a %i en la imagen %i", pixelsApproved, pixelValue, imageIndex);
+        logString(logLine);
+
+        sprintf(logLine, "Se procesó la imagen %i", imageIndex);
+        logString(logLine);
+
     } else {
-        printf("Error al recibir la imagen, no se encontraron datos");
+        logString("Error al recibir la imagen, no se encontraron datos");
     }
 
     //se envia la respuesta al cliente
@@ -113,7 +130,7 @@ int countimagesindirectoy(){
     int file_count = 0;
     DIR * dirp;
     struct dirent * entry;
-    dirp = opendir("/home/brayan/Cursos/Operativos/Tarea1/Server/Images");
+    dirp = opendir("/mnt/c/Users/Brayan/Documents/I Sem 2022/Operativos/Tarea 1/Server/Images");
     while ((entry = readdir(dirp)) != NULL) {
         if (entry->d_type == DT_REG) {
             file_count++;

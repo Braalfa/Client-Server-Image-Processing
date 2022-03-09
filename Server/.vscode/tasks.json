@@ -9,6 +9,7 @@
                 "main.c",
                 "ImageProcessing/imageProcessing.c",
                 "Logging/logging.c",
+                "serverController/serverController.c",
                 "-o",
                 "main",
                 "-fdiagnostics-color=always",
@@ -23,7 +24,9 @@
                 "-lMagickWand-7.Q16HDRI", 
                 "-lMagickCore-7.Q16HDRI",
                 "-lm", 
-                "-ldl"
+                "-ldl",
+                "-lulfius", 
+                "-ljansson"
             ],
             "options": {
                 "cwd": "${fileDirname}"

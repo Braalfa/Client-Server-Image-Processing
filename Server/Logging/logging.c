@@ -29,6 +29,7 @@ void logString(char* logInfo){
     sprintf(logLine, "[%s] %s\n", currentTime, logInfo);
     fprintf(file, logLine);
     fclose(file);
+    printf("%s",logLine);
 }
 
 char* getCurrentTimeAsString(char* currentTime)
