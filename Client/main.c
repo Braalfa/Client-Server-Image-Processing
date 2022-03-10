@@ -11,22 +11,18 @@ void makePathToImage(char *userInput);
 void readPathToImage();
 void makeIpPort(char *port, char *ip);
 
-int main(int argumentAmount, char* argumentValue[]) {
+int main() {
     int pixelNumber = -1;
     char ip[25] = "";
     char port[25] = "";
 
-    
+    printf("Digite la IP a donde se enviaran las imagenes en esta ronda\n");
+    scanf("%s", ip);
 
-     for (int i = 0; i < argumentAmount; i++) {
-        if(strcmp(argumentValue[i], "-ip") == 0){
-            strcpy(ip, argumentValue[i + 1]);
-        }
-        if(strcmp(argumentValue[i], "-port") == 0){
-            strcpy(port, argumentValue[i + 1]);
-        }
+    printf("Digite el puerto asociado a la IP a donde se enviaran las imagenes en esta ronda\n");
+    scanf("%s", port);
 
-    }
+
     //Verificar si los argumentos se pasaron coreectamente
     if (strcmp(ip, "") == 0 || strcmp(port, "") == 0) {
         printf("Fue imposible conectarse al servidor. Argumentos faltantes o erroneos\n");
