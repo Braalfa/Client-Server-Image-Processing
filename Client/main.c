@@ -43,8 +43,6 @@ int main() {
         if(strcmp(userInput, "end") == 0){
             break;
         }
-        printf("Favor introducir el valor del pixel asociado a la imagen\n");
-        scanf("%d", &pixelNumber);
         FILE *file = fopen(userInput, "r");
         //Comprueba si el archivo existe en esa direccion. Si no vuelve al inicio del while
             if (!file) {
@@ -55,6 +53,8 @@ int main() {
         makePathToImage(userInput);
         system(imageLinkToServer);
         readPathToImage();
+        printf("Favor introducir el valor del pixel asociado a la imagen\n");
+        scanf("%d", &pixelNumber);
 
         //Creacion del Json para enviar la imagen
         imageDataJson = json_object();
