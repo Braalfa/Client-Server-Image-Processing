@@ -1,9 +1,9 @@
-:: Color client automatic batch entrypoint
+:: Color client image building automatic batch entrypoint
 @ECHO OFF
 
 :: Remove previous image of color-client
 ECHO ====== WELCOME TO COLOR CLIENT ======
-ECHO 1. Deleting previous image...
+ECHO 1. Creating container...
 docker image rm color-client
 ECHO - PREVIOUS IMAGE DELETED -
 ECHO =====================================
@@ -14,6 +14,7 @@ docker build -t color-client .
 ECHO - DOCKER IMAGE BUILT -
 ECHO =====================================
 
-:: Run container using new image
-ECHO 3. Running container from new image...
+:: Install dependencies in image
+ECHO 3. Creating container...
 docker run -it --rm color-client
+ECHO -- CONTAINER EXITED --
