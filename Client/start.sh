@@ -8,7 +8,8 @@ echo "====================================="
 
 # Build docker image
 echo "2. Building new Docker image from source..."
-chmod +x install.sh
+make clean
+make
 docker build -t color-client .
 echo "- DOCKER IMAGE BUILT -"
 echo "====================================="
