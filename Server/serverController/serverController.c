@@ -60,7 +60,7 @@ int processImage (const struct _u_request * request, struct _u_response * respon
         logString(logLine);
 
         //crea el comando para decodificar las imagenes y guardarlas en el directorio
-        char *commandline="base64 --decode '/mnt/c/Users/Brayan/Documents/I Sem 2022/Operativos/Tarea 1/Server/coded.txt' > '/mnt/c/Users/Brayan/Documents/I Sem 2022/Operativos/Tarea 1/Server/Images/image'";
+        char *commandline="base64 --decode '/home/chus/Operativos/Tarea1-Operativos/Server/coded.txt' > '/home/chus/Operativos/Tarea1-Operativos/Server/Images/image'";
 
         // verifica cual es el formato de la imagen enviada
         char *extension= malloc(5);
@@ -71,7 +71,7 @@ int processImage (const struct _u_request * request, struct _u_response * respon
         char imageIndexString[33];
         sprintf(imageIndexString, "%d", imageIndex);
 
-        FILE *file = fopen("/mnt/c/Users/Brayan/Documents/I Sem 2022/Operativos/Tarea 1/Server/coded.txt", "w");
+        FILE *file = fopen("/home/chus/Operativos/Tarea1-Operativos/Server/coded.txt", "w");
         fputs(imageData, file);
         fclose(file);
 
@@ -85,7 +85,7 @@ int processImage (const struct _u_request * request, struct _u_response * respon
         system(commandToDecodeImage);
 
         //se crea la ruta para para la función que verifica los pixeles
-        char *directory="/mnt/c/Users/Brayan/Documents/I Sem 2022/Operativos/Tarea 1/Server/Images/image";
+        char *directory="/home/chus/Operativos/Tarea1-Operativos/Server/Images/image";
         char *route= malloc(strlen(directory)+strlen(extension)+ strlen(imageIndexString)+1);
         strcpy(route,directory);
         strcat(route,imageIndexString);
@@ -130,7 +130,7 @@ int countimagesindirectoy(){
     int file_count = 0;
     DIR * dirp;
     struct dirent * entry;
-    dirp = opendir("/mnt/c/Users/Brayan/Documents/I Sem 2022/Operativos/Tarea 1/Server/Images");
+    dirp = opendir("/home/chus/Operativos/Tarea1-Operativos/Server/Images");
     while ((entry = readdir(dirp)) != NULL) {
         if (entry->d_type == DT_REG) {
             file_count++;

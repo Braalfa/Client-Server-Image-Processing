@@ -85,12 +85,14 @@ int main() {
 
 //Codigo que genera el comando de terminal necesario para determinar la ruta dinamica de la imagen
 void makePathToImage(char *userInput){
+    //Se definen las partes estaticas del comando utilizado
     char *firstPart = "base64 ";
     char *secondPartImage = " > encondedImage.txt";
 
+    //Se reserva memoria dinamica para poder ejecutar el comando
     imageLinkToServer = malloc(strlen(firstPart) + strlen(userInput) + strlen(secondPartImage) + 1);
 
-
+    //Se construye el comando por medio de concatenacion
     strcpy(imageLinkToServer, firstPart);
     strcat(imageLinkToServer, userInput);
     strcat(imageLinkToServer, secondPartImage);
@@ -98,13 +100,14 @@ void makePathToImage(char *userInput){
 
 //Codigo que toma el arhivo, lee su contenido y lo serializa desde base64 a String
 void readPathToImage(){
+    //Se abre el archivo con el fin de leerlo
     FILE *base64Image = fopen("encondedImage.txt", "r");
     char line[121];
     char **readData = NULL;
     int lineLenght;
     int lineAmount = 0;
     unsigned long amountOfChars = 0;
-
+    //Se define la memoria para que se lean las lineas del archivo
     while (fgets(line, 120, base64Image)) {
         readData = realloc(readData, (lineAmount + 1) * sizeof(char*));
         line[strcspn(line, "\n")] = 0;
@@ -114,9 +117,9 @@ void readPathToImage(){
         lineAmount++;
         amountOfChars += lineLenght;
     }
-
+    //Se cierra el archivo que se abrio
     fclose(base64Image);
-
+    //Se libera memoria
     encondedContent = malloc(amountOfChars + 1);
     strcpy(encondedContent, readData[0]);
     free(readData[0]);
@@ -125,22 +128,25 @@ void readPathToImage(){
         strcat(encondedContent, readData[i]);
         free(readData[i]);
     }
-
+    //Se libera memoria y se limpia el .txt
     free(readData);
     remove("encondedImage.txt");
 }
 
 //Codigo que arma el IP y el puerto de manera dinamica segun el input del usuario
 void makeIpPort(char *port, char *ip){
+    //Se definen las partes estaticas del URL del servidor
     char *firstPart = "http://";
     char *secondPartImage = "/api/imagePixels";
     char *dots = ":";
 
+    //Se reserva la memoria dinamica en el HEAP para poder armar el mensaje
     dynamicURL = malloc(strlen(firstPart) + strlen(ip)+ strlen(dots)+ strlen(port) + strlen(secondPartImage) + 1);
 
-
+    //Se arma el URL de maner dinamica
     strcpy(dynamicURL, firstPart);
     strcat(dynamicURL, ip);
+    strcat(dynamicURL, dots);
     strcat(dynamicURL, port);
     strcat(dynamicURL, secondPartImage);
 
