@@ -1,0 +1,26 @@
+[2022-03-10 18:12:18] Iniciando main
+[2022-03-10 18:12:18] Servidor iniciado en el puerto 8080
+[2022-03-10 18:12:39] Se recibió la imagen 8
+[2022-03-10 18:12:39] Se encontraron 244269 pixeles mayores a 5 en la imagen 8
+[2022-03-10 18:12:39] Se procesó la imagen 8
+[2022-03-10 18:12:55] Se recibió la imagen 9
+[2022-03-10 18:12:55] Se encontraron 244269 pixeles mayores a 5 en la imagen 9
+[2022-03-10 18:12:55] Se procesó la imagen 9
+[2022-03-10 18:13:55] Se recibió la imagen 10
+[2022-03-10 18:13:55] Se encontraron 45330 pixeles mayores a 150 en la imagen 10
+[2022-03-10 18:13:55] Se procesó la imagen 10
+[2022-03-10 18:14:27] Se recibió la imagen 11
+[2022-03-10 18:14:29] Se encontraron 975757 pixeles mayores a 150 en la imagen 11
+[2022-03-10 18:14:29] Se procesó la imagen 11
+[2022-03-10 18:19:32] Se recibió la imagen 12
+[2022-03-10 18:19:32] Se encontraron 22520 pixeles mayores a 150 en la imagen 12
+[2022-03-10 18:19:32] Se procesó la imagen 12
+[2022-03-10 18:20:13] Se recibió la imagen 13
+[2022-03-10 18:20:13] Se encontraron 133714 pixeles mayores a 150 en la imagen 13
+[2022-03-10 18:20:13] Se procesó la imagen 13
+[2022-03-10 18:21:14] Se recibió la imagen 14
+[2022-03-10 18:21:15] Se encontraron 1043562 pixeles mayores a 150 en la imagen 14
+[2022-03-10 18:21:15] Se procesó la imagen 14
+[2022-03-10 18:22:38] Se recibió la imagen 15
+[2022-03-10 18:22:38] Se encontraron 20479 pixeles mayores a 150 en la imagen 15
+[2022-03-10 18:22:38] Se procesó la imagen 15
