@@ -4,7 +4,8 @@
 #include "serverController.h"
 #include "../ImageProcessing/imageProcessing.h"
 #include "../Logging/logging.h"
-
+#include <semaphore.h>
+#include <fcntl.h>
 
 
 int processImage (const struct _u_request * request, struct _u_response * response, void * user_data);
@@ -13,6 +14,16 @@ char logLine[STR_LEN];
 //función para crear el servidor RESTAPI por medio de la biblioteca ulfius: https://github.com/babelouest/ulfius
 int createServer(){
     struct _u_instance instance;
+    
+    
+    // se crea el semaforo para hacer que el servidor espere los request del cliente
+    sem_t* serverSem = sem_open("serverSem", O_CREAT, 0644, 0);
+
+    if (serverSem == SEM_FAILED)
+    {
+        perror("[sem_open] Failed\n");
+        return 1;
+    }
 
     // Inicializa la instancia del servidor en el puerto indicado
     if (ulfius_init_instance(&instance, PORT, NULL, NULL) != U_OK) {
@@ -26,13 +37,31 @@ int createServer(){
     if (ulfius_start_framework(&instance) == U_OK) {
         sprintf(logLine, "Servidor iniciado en el puerto %d", instance.port);
         logString(logLine);
-        while (1){}
+        // esoera a que el semaforo pase a 1
+        if (sem_wait(serverSem) < 0)
+        {
+            printf("[sem_wait] Failed\n");
+            return 1;
+        }
     } else {
         logString("Error iniciando el servidor");
         fprintf(stderr, "Error iniciando el servidor\n");
     }
 
     logString("Terminando el servidor");
+    
+    //se cierra el semaforo
+        if (sem_close(serverSem) != 0)
+    {
+        perror("[sem_close] Failed\n");
+        return 1;
+    }
+
+    if (sem_unlink("serverSem") < 0)
+    {
+        printf("[sem_unlink] Failed\n");
+        return 1;
+    }
 
     ulfius_stop_framework(&instance);
     ulfius_clean_instance(&instance);
@@ -60,7 +89,7 @@ int processImage (const struct _u_request * request, struct _u_response * respon
         logString(logLine);
 
         //crea el comando para decodificar las imagenes y guardarlas en el directorio
-        char *commandline="base64 --decode '/home/chus/Operativos/Tarea1-Operativos/Server/coded.txt' > '/home/chus/Operativos/Tarea1-Operativos/Server/Images/image'";
+        char *commandline="base64 --decode 'coded.txt' > 'Images/image'";
 
         // verifica cual es el formato de la imagen enviada
         char *extension= malloc(5);
@@ -71,7 +100,7 @@ int processImage (const struct _u_request * request, struct _u_response * respon
         char imageIndexString[33];
         sprintf(imageIndexString, "%d", imageIndex);
 
-        FILE *file = fopen("/home/chus/Operativos/Tarea1-Operativos/Server/coded.txt", "w");
+        FILE *file = fopen("coded.txt", "w");
         fputs(imageData, file);
         fclose(file);
 
@@ -85,7 +114,7 @@ int processImage (const struct _u_request * request, struct _u_response * respon
         system(commandToDecodeImage);
 
         //se crea la ruta para para la función que verifica los pixeles
-        char *directory="/home/chus/Operativos/Tarea1-Operativos/Server/Images/image";
+        char *directory="Images/image";
         char *route= malloc(strlen(directory)+strlen(extension)+ strlen(imageIndexString)+1);
         strcpy(route,directory);
         strcat(route,imageIndexString);
@@ -130,7 +159,7 @@ int countimagesindirectoy(){
     int file_count = 0;
     DIR * dirp;
     struct dirent * entry;
-    dirp = opendir("/home/chus/Operativos/Tarea1-Operativos/Server/Images");
+    dirp = opendir("Server/Images");
     while ((entry = readdir(dirp)) != NULL) {
         if (entry->d_type == DT_REG) {
             file_count++;
