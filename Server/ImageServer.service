@@ -8,7 +8,9 @@ Restart=on-failure
 RestartSec=1
 StartLimitIntervalSec=10
 User=brayan
+WorkingDirectory=/home/chus/Operativos/Tarea1-Operativos/Server/
 ExecStart=/home/brayan/Cursos/Operativos/Tarea1/Server/main
-
+ExecStop=/home/brayan/Cursos/Operativos/Tarea1/Server/StopServer/StopSO
+SendSIGKILL=no
 [Install]
 WantedBy=multi-user.target
