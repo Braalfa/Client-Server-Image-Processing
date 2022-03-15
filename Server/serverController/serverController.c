@@ -72,6 +72,7 @@ int createServer(){
 //función que recibe la imagen del cliente y la procesa
 int processImage (const struct _u_request * request, struct _u_response * response, void * user_data){
     // obtiene los datos del body del request y los guarda en variables
+    logString("request de cliente recibida");
     json_t *jsonData = ulfius_get_json_body_request(request, NULL);
     json_t * json_body = NULL;
     if (jsonData != NULL) {
