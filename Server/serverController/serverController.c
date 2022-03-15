@@ -159,7 +159,7 @@ int countimagesindirectoy(){
     int file_count = 0;
     DIR * dirp;
     struct dirent * entry;
-    dirp = opendir("Server/Images");
+    dirp = opendir("Images");
     while ((entry = readdir(dirp)) != NULL) {
         if (entry->d_type == DT_REG) {
             file_count++;
