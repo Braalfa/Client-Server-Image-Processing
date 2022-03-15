@@ -30,7 +30,7 @@ MagickWand* getImage(char* path){
   image=NewMagickWand();
   status=MagickReadImage(image, path);
   if (status == MagickFalse)
-    printf("F");
+    printf("Unexpected error");
 
   return image;
 }
@@ -39,7 +39,7 @@ void endImageProcessing(MagickWand* image){
   MagickBooleanType status;
   image=DestroyMagickWand(image);
   if (status == MagickFalse)
-    printf("F");
+    printf("Unexpected error");
   MagickWandTerminus();
 }
 
@@ -50,7 +50,7 @@ long countPixelsBiggerThanThreshold(MagickWand *image, int threshold){
   long pixelsBiggerThanThreshold = 0;
   PixelIterator *iterator=NewPixelIterator(image);
   if (iterator == (PixelIterator *) NULL)
-    printf("F");
+    printf("Unexpected error");
   for (long y=0; y < (long) MagickGetImageHeight(image); y++)
   {
     PixelWand** pixels=PixelGetNextIteratorRow(iterator,&width);
