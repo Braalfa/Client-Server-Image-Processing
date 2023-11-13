@@ -1,1 +1,3 @@
-Tarea 1
+## Summary
+
+This is a client server project for image processing.
